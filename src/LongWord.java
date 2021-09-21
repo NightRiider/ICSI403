@@ -5,6 +5,7 @@
  * Version 1 - JP Aliprantis, SB
  */
 
+import java.nio.ByteBuffer;
 import java.util.BitSet;
 import java.util.Random;
 
@@ -118,7 +119,6 @@ public class LongWord {
             index++;
             value = value >>> 1;
         }
-
     }
 
 
@@ -126,14 +126,13 @@ public class LongWord {
 
         long decimal = 0;
 
-        for (int i = 31; i >= 0; i--) {
+        for (int i = 0; i < 32; i++) {
             if (bitSet.get(i)) {
                 decimal += Math.pow(2, 31 - i);
             }
         }
 
         return decimal;
-
     }
 
 
