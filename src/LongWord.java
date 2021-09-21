@@ -34,17 +34,46 @@ public class LongWord {
         bitSet.set(i, !bitSet.get(i));
     }
 
+    public void set(int value) {
+        bitSet.clear();
+        System.out.println(bitSet);
+        BitSet number = new BitSet(32);
+        for (int i = 0; i < 32; i++) {
+
+        }
+
+    }
+
+
+    public long getUnsigned() {
+
+        long decimal = 0;
+
+        for (int i = 31; i >= 0; i--) {
+            if (bitSet.get(i)) {
+                decimal += Math.pow(2, 31 - i);
+            }
+        }
+
+        return decimal;
+
+    }
+
+
+    //
     public int getSigned() {
 
         int decimal = 0;
 
-        // 00000000 00000000 00000000 00000000
-        // 01000000 00000000 00000000 00000000
+        // If number is not negative, find the decimal value
+        for (int i = 31; i > 0; i--) {
 
-        for (int i = 0; i < 32; i++) {
-            if (!bitSet.get(i)) {
-                decimal += Math.pow(2, i);
+            if (bitSet.get(i)) {
+                decimal += Math.pow(2, 31 - i);
             }
+        }
+        if (bitSet.get(0)) {
+            decimal -= Math.pow(2, 31);
         }
 
         return decimal;
