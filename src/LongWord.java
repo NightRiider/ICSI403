@@ -10,13 +10,7 @@ import java.util.Random;
 
 public class LongWord {
 
-    private final BitSet bitSet = new BitSet(32);
-
-    public LongWord() {
-        for (int i = 0; i < 32; i++) {
-            bitSet.set(i, new Random().nextBoolean());
-        }
-    }
+    private BitSet bitSet = new BitSet(32);
 
     public boolean getBit(int i) {
         return bitSet.get(i);
@@ -34,12 +28,86 @@ public class LongWord {
         bitSet.set(i, !bitSet.get(i));
     }
 
-    public void set(int value) {
-        bitSet.clear();
-        System.out.println(bitSet);
-        BitSet number = new BitSet(32);
-        for (int i = 0; i < 32; i++) {
+    public boolean isZero() {
+        return bitSet.length() == 0;
+    }
 
+    public LongWord not() {
+        LongWord newLongWord = new LongWord();
+        newLongWord.copy(this);
+        bitSet.and(bitSet);
+
+        return newLongWord;
+    }
+
+    public void copy(LongWord other) {
+        bitSet = (BitSet) other.bitSet.clone();
+    }
+
+    // LongWord shiftLeftLogical(int amount); // left-shift this long-word by
+    // amount bits (padding with 0’s), creates a new long-word
+
+    // 0110 1001
+    // 1010 0100
+    // shift by 2
+
+    public LongWord shiftRightLogical(int amount) {
+
+        LongWord newLongWord = new LongWord();
+
+        for (int i = amount; i < 32; i++) {
+            if (bitSet.get(i - amount)) {
+                newLongWord.setBit(i);
+            }
+        }
+
+        return newLongWord;
+    }
+
+    public LongWord shiftLeftLogical(int amount) {
+
+        LongWord newLongWord = new LongWord();
+
+        for (int i = amount; i < 32; i++) {
+
+            if (bitSet.get(i - amount)) {
+                newLongWord.setBit(31 - i);
+            }
+        }
+
+        return newLongWord;
+    }
+
+    //LongWord shiftRightArithmetic(int amount);// right-shift this long-word
+    //by amount bits (sign-extending), creates a new long-word
+    public LongWord shiftRightArithmetic(int amount) {
+
+        LongWord newLongWord = new LongWord();
+
+        for (int i = 0; i < 32; i++) {
+            if (bitSet.get(i)) {
+                int newIndex = i + amount;
+                newLongWord.setBit(newIndex > 31 ? i : newIndex);
+            }
+        }
+
+        return newLongWord;
+    }
+
+    public void set(int value) {
+
+        int index = 0;
+
+        while (value != 0) {
+
+            if (value % 2 != 0) {
+                bitSet.set(31 - index);
+            } else {
+                bitSet.clear(31 - index);
+            }
+
+            index++;
+            value = value >>> 1;
         }
 
     }
@@ -60,13 +128,12 @@ public class LongWord {
     }
 
 
-    //
     public int getSigned() {
 
         int decimal = 0;
 
         // If number is not negative, find the decimal value
-        for (int i = 31; i > 0; i--) {
+        for (int i = 1; i < 32; i++) {
 
             if (bitSet.get(i)) {
                 decimal += Math.pow(2, 31 - i);
