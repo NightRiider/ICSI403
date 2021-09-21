@@ -32,12 +32,21 @@ public class LongWord {
         return bitSet.length() == 0;
     }
 
-    public LongWord not() {
+    public LongWord and(LongWord other) {
         LongWord newLongWord = new LongWord();
-        newLongWord.copy(this);
-        bitSet.and(bitSet);
+        //newLongWord.copy(this);
+        bitSet.and(other.bitSet);
 
         return newLongWord;
+    }
+
+    public LongWord not(LongWord other) {
+        for(int i = 0; i < 32; i++) {
+            if(!bitSet.get(i)) {
+                other.setBit(i);
+            }
+        }
+        return other;
     }
 
     public void copy(LongWord other) {
