@@ -5,81 +5,100 @@
  * Version 1 - JP Aliprantis, SB
  */
 
-import java.nio.ByteBuffer;
 import java.util.BitSet;
-import java.util.Random;
 
 public class LongWord {
 
     private BitSet bitSet = new BitSet(32);
 
+    // Gets the value of a bit at index i
     public boolean getBit(int i) {
-        return bitSet.get(i);
+        return bitSet.get(31 - i);
     }
 
+    // Sets a specific bit to be true
     public void setBit(int i) {
-        bitSet.set(i, true);
+        bitSet.set(31 - i);
     }
 
+    public void setBit(int i, boolean value) {
+        bitSet.set(31 - i, value);
+    }
+
+    // Clears the bit at a specific index
     public void clearBit(int i) {
-        bitSet.clear(i);
+        bitSet.clear(31 - i);
     }
 
+    // Flips the bit of the specified index
     public void toggleBit(int i) {
-        bitSet.set(i, !bitSet.get(i));
+        bitSet.set(31 - i, !bitSet.get(31 - i));
     }
 
+    // Returns if the bits are all zeroes or not
     public boolean isZero() {
         return bitSet.length() == 0;
     }
 
+    // Performs a logical AND comparison between two long words, returning a new one
     public LongWord and(LongWord other) {
-        LongWord newLongWord = new LongWord();
-        //newLongWord.copy(this);
-        bitSet.and(other.bitSet);
+        LongWord result = new LongWord();
+        for (int i = 0; i < 32; i++) {
+            if (bitSet.get(i) && other.bitSet.get(i)) {
+                result.bitSet.set(i);
+            }
+        }
 
+        return result;
+    }
+
+    // Performs a logical OR comparison between two long words, returning a new one
+    public LongWord or(LongWord other) {
+        LongWord result = new LongWord();
+        for (int i = 0; i < 32; i++) {
+            if (bitSet.get(i) || other.bitSet.get(i)) {
+                result.bitSet.set(i);
+            }
+        }
+
+        return result;
+    }
+
+    public LongWord xor(LongWord other) {
+        LongWord result = new LongWord();
+        for (int i = 0; i < 32; i++) {
+            if (bitSet.get(i) == other.bitSet.get(i)) {
+                result.bitSet.clear(i);
+            } else {
+                result.bitSet.set(i);
+            }
+        }
+        return result;
+    }
+
+    // Flips the bits in the binary representation
+    // 1 -> 0 and 0 -> 1
+    public LongWord not() {
+        LongWord newLongWord = new LongWord();
+        for (int i = 0; i < 32; i++) {
+            if (!bitSet.get(31 - i)) {
+                newLongWord.setBit(i);
+            }
+        }
         return newLongWord;
     }
 
-    public LongWord not(LongWord other) {
-        for(int i = 0; i < 32; i++) {
-            if(!bitSet.get(i)) {
-                other.setBit(i);
-            }
-        }
-        return other;
-    }
-
+    // Copies the values from one bitSet and places them into another bitSet
     public void copy(LongWord other) {
         bitSet = (BitSet) other.bitSet.clone();
     }
 
-    // LongWord shiftLeftLogical(int amount); // left-shift this long-word by
-    // amount bits (padding with 0’s), creates a new long-word
-
-    // 0110 1001
-    // 1010 0100
-    // shift by 2
-
+    // Shifts the bits to the right by amount, padding with 0s
     public LongWord shiftRightLogical(int amount) {
 
         LongWord newLongWord = new LongWord();
 
         for (int i = amount; i < 32; i++) {
-            if (bitSet.get(i - amount)) {
-                newLongWord.setBit(i);
-            }
-        }
-
-        return newLongWord;
-    }
-
-    public LongWord shiftLeftLogical(int amount) {
-
-        LongWord newLongWord = new LongWord();
-
-        for (int i = amount; i < 32; i++) {
-
             if (bitSet.get(i - amount)) {
                 newLongWord.setBit(31 - i);
             }
@@ -88,22 +107,31 @@ public class LongWord {
         return newLongWord;
     }
 
+    // Shifts the bits to the left by amount, padding with 0s
+    public LongWord shiftLeftLogical(int amount) {
+
+        return new LongWord(bitSet.get(amount, Math.max(amount, bitSet.length())));
+    }
+
     //LongWord shiftRightArithmetic(int amount);// right-shift this long-word
     //by amount bits (sign-extending), creates a new long-word
+    // Right Shifts the longword by amount
+    // tbd
     public LongWord shiftRightArithmetic(int amount) {
 
         LongWord newLongWord = new LongWord();
 
-        for (int i = 0; i < 32; i++) {
-            if (bitSet.get(i)) {
-                int newIndex = i + amount;
-                newLongWord.setBit(newIndex > 31 ? i : newIndex);
+        for (int i = amount; i < 32; i++) {
+            if (bitSet.get(i - amount)) {
+                newLongWord.setBit(31 - i);
             }
         }
 
         return newLongWord;
     }
 
+    // one sec!!!!!!
+    // Sets the bitSet values to the correct binary representation of number value
     public void set(int value) {
 
         int index = 0;
@@ -121,11 +149,14 @@ public class LongWord {
         }
     }
 
-
+    // Calculates decimal value from the binary representation
+// Positive numbers only
     public long getUnsigned() {
 
         long decimal = 0;
 
+        // Calculates only positive number from binary representation
+        // Uses sum of powers of 2 on true bits
         for (int i = 0; i < 32; i++) {
             if (bitSet.get(i)) {
                 decimal += Math.pow(2, 31 - i);
@@ -135,18 +166,19 @@ public class LongWord {
         return decimal;
     }
 
-
+    // Calculates decimal value from the binary representation
+// Also accounts for two's complement
     public int getSigned() {
 
         int decimal = 0;
 
-        // If number is not negative, find the decimal value
+        // If number is not negative, find the decimal value by adding up powers of 2 on true bits
         for (int i = 1; i < 32; i++) {
-
             if (bitSet.get(i)) {
                 decimal += Math.pow(2, 31 - i);
             }
         }
+        // If most significant bit is 1, subtract it from the current total sum to get 2s complement
         if (bitSet.get(0)) {
             decimal -= Math.pow(2, 31);
         }
@@ -157,8 +189,8 @@ public class LongWord {
     @Override
     public String toString() {
 
-        StringBuilder bits = new StringBuilder();
-        StringBuilder hex = new StringBuilder();
+        StringBuilder bits = new StringBuilder(); // holds binary representation of number
+        StringBuilder hex = new StringBuilder(); // holds hex representation of number
         int space = 1; // used to know when to add space and convert to hex
 
         for (int i = 0; i < 32; i++) {
