@@ -1,3 +1,5 @@
+import java.util.Random;
+
 public class TestLongWord {
 
     public static void main(String[] args) {
@@ -55,10 +57,15 @@ public class TestLongWord {
 
         // Right arithmetic method test - GOOD
         LongWord rightAShift = new LongWord();
-        rightAShift.set(3894323);
+        int testVal = -new Random().nextInt();
+        rightAShift.set(testVal);
         System.out.println("Orig Right Shift:       " + rightAShift);
-        rightAShift = rightAShift.shiftRightArithmetic(7);
+        rightAShift = rightAShift.shiftRightArithmetic(3);
         System.out.println("Right Arithmetic Shift: " + rightAShift);
+        String correct = Integer.toBinaryString(testVal >> 3);
+        String pad = "0".repeat(32 - correct.length());
+        correct = (pad + correct).replaceAll("(.{4})", "$1 ");
+        System.out.println("CORRECT :               " + correct);
         System.out.println();
 
         // Not() method test - GOOD

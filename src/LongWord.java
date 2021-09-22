@@ -11,6 +11,13 @@ public class LongWord {
 
     private BitSet bitSet = new BitSet(32);
 
+    public LongWord() {
+    }
+
+    public LongWord(BitSet bitSet) {
+        this.bitSet = bitSet;
+    }
+
     // Gets the value of a bit at index i
     public boolean getBit(int i) {
         return bitSet.get(31 - i);
@@ -43,10 +50,9 @@ public class LongWord {
     // Performs a logical AND comparison between two long words, returning a new one
     public LongWord and(LongWord other) {
         LongWord result = new LongWord();
+
         for (int i = 0; i < 32; i++) {
-            if (bitSet.get(i) && other.bitSet.get(i)) {
-                result.bitSet.set(i);
-            }
+            result.bitSet.set(i, bitSet.get(i) && other.bitSet.get(i));
         }
 
         return result;
@@ -55,10 +61,9 @@ public class LongWord {
     // Performs a logical OR comparison between two long words, returning a new one
     public LongWord or(LongWord other) {
         LongWord result = new LongWord();
+
         for (int i = 0; i < 32; i++) {
-            if (bitSet.get(i) || other.bitSet.get(i)) {
-                result.bitSet.set(i);
-            }
+            result.bitSet.set(i, bitSet.get(i) || other.bitSet.get(i));
         }
 
         return result;
@@ -66,13 +71,11 @@ public class LongWord {
 
     public LongWord xor(LongWord other) {
         LongWord result = new LongWord();
+
         for (int i = 0; i < 32; i++) {
-            if (bitSet.get(i) == other.bitSet.get(i)) {
-                result.bitSet.clear(i);
-            } else {
-                result.bitSet.set(i);
-            }
+            result.bitSet.set(i, bitSet.get(i) != other.bitSet.get(i));
         }
+
         return result;
     }
 
@@ -80,11 +83,11 @@ public class LongWord {
     // 1 -> 0 and 0 -> 1
     public LongWord not() {
         LongWord newLongWord = new LongWord();
+
         for (int i = 0; i < 32; i++) {
-            if (!bitSet.get(31 - i)) {
-                newLongWord.setBit(i);
-            }
+            newLongWord.setBit(i, !getBit(i));
         }
+
         return newLongWord;
     }
 
@@ -95,7 +98,6 @@ public class LongWord {
 
     // Shifts the bits to the right by amount, padding with 0s
     public LongWord shiftRightLogical(int amount) {
-
         LongWord newLongWord = new LongWord();
 
         for (int i = amount; i < 32; i++) {
@@ -109,14 +111,12 @@ public class LongWord {
 
     // Shifts the bits to the left by amount, padding with 0s
     public LongWord shiftLeftLogical(int amount) {
-
         return new LongWord(bitSet.get(amount, Math.max(amount, bitSet.length())));
     }
 
     // Right Shifts the long word by amount
     // with sign-extending
     public LongWord shiftRightArithmetic(int amount) {
-
         LongWord newLongWord = new LongWord();
 
         for (int i = amount; i < 32; i++) {
@@ -125,13 +125,13 @@ public class LongWord {
             }
         }
 
+        newLongWord.bitSet.set(0, amount, bitSet.get(0));
+
         return newLongWord;
     }
 
-    // one sec!!!!!!
     // Sets the bitSet values to the correct binary representation of number value
     public void set(int value) {
-
         int index = 0;
 
         while (value != 0) {
@@ -150,7 +150,6 @@ public class LongWord {
     // Calculates decimal value from the binary representation
     // Positive numbers only
     public long getUnsigned() {
-
         long decimal = 0;
 
         // Calculates only positive number from binary representation
@@ -167,7 +166,6 @@ public class LongWord {
     // Calculates decimal value from the binary representation
     // Also accounts for two's complement
     public int getSigned() {
-
         int decimal = 0;
 
         // If number is not negative, find the decimal value by adding up powers of 2 on true bits
@@ -186,7 +184,6 @@ public class LongWord {
 
     @Override
     public String toString() {
-
         StringBuilder bits = new StringBuilder(); // holds binary representation of number
         StringBuilder hex = new StringBuilder(); // holds hex representation of number
         int space = 1; // used to know when to add space and convert to hex
