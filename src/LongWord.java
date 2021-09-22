@@ -113,10 +113,8 @@ public class LongWord {
         return new LongWord(bitSet.get(amount, Math.max(amount, bitSet.length())));
     }
 
-    //LongWord shiftRightArithmetic(int amount);// right-shift this long-word
-    //by amount bits (sign-extending), creates a new long-word
-    // Right Shifts the longword by amount
-    // tbd
+    // Right Shifts the long word by amount
+    // with sign-extending
     public LongWord shiftRightArithmetic(int amount) {
 
         LongWord newLongWord = new LongWord();
@@ -138,7 +136,7 @@ public class LongWord {
 
         while (value != 0) {
 
-            if (value % 2 != 0) {
+            if (value % 2 != 0) { // if multiple of 2
                 bitSet.set(31 - index);
             } else {
                 bitSet.clear(31 - index);
@@ -150,7 +148,7 @@ public class LongWord {
     }
 
     // Calculates decimal value from the binary representation
-// Positive numbers only
+    // Positive numbers only
     public long getUnsigned() {
 
         long decimal = 0;
@@ -167,7 +165,7 @@ public class LongWord {
     }
 
     // Calculates decimal value from the binary representation
-// Also accounts for two's complement
+    // Also accounts for two's complement
     public int getSigned() {
 
         int decimal = 0;
