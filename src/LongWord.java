@@ -12,9 +12,10 @@ public class LongWord {
     private BitSet bitSet = new BitSet(32);
 
     public LongWord() {
+
     }
 
-    public LongWord(BitSet bitSet) {
+    private LongWord(BitSet bitSet) {
         this.bitSet = bitSet;
     }
 
@@ -28,6 +29,7 @@ public class LongWord {
         bitSet.set(31 - i);
     }
 
+    // Sets a specific bit to be a specific value (T|F)
     public void setBit(int i, boolean value) {
         bitSet.set(31 - i, value);
     }
@@ -63,12 +65,13 @@ public class LongWord {
         LongWord result = new LongWord();
 
         for (int i = 0; i < 32; i++) {
-            result.bitSet.set(i, bitSet.get(i) || other.bitSet.get(i));
+            result.bitSet.set(i, bitSet.get(i) || other.bitSet.get(i)); // Sets the bit for OR of the 2 bitSets
         }
 
         return result;
     }
 
+    // Performs a logical XOR comparison between two long words, returning a new one
     public LongWord xor(LongWord other) {
         LongWord result = new LongWord();
 
@@ -99,6 +102,7 @@ public class LongWord {
     // Shifts the bits to the right by amount, padding with 0s
     public LongWord shiftRightLogical(int amount) {
         LongWord newLongWord = new LongWord();
+
 
         for (int i = amount; i < 32; i++) {
             if (bitSet.get(i - amount)) {
@@ -143,7 +147,7 @@ public class LongWord {
             }
 
             index++;
-            value = value >>> 1;
+            value = value >>> 1; // shifts the value by 1
         }
     }
 
@@ -153,7 +157,7 @@ public class LongWord {
         long decimal = 0;
 
         // Calculates only positive number from binary representation
-        // Uses sum of powers of 2 on true bits
+        // Adds to sum of powers of 2 for true bits
         for (int i = 0; i < 32; i++) {
             if (bitSet.get(i)) {
                 decimal += Math.pow(2, 31 - i);
@@ -183,6 +187,7 @@ public class LongWord {
     }
 
     @Override
+    // Returns the binary and hex representation of a long word
     public String toString() {
         StringBuilder bits = new StringBuilder(); // holds binary representation of number
         StringBuilder hex = new StringBuilder(); // holds hex representation of number
