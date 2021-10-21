@@ -15,6 +15,7 @@ public class LongWord {
 
     }
 
+
     private LongWord(BitSet bitSet) {
         this.bitSet = bitSet;
     }

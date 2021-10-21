@@ -1,3 +1,5 @@
+import java.util.BitSet;
+
 public class TestLongWord {
 
     public static void runTests() {
@@ -209,5 +211,23 @@ public class TestLongWord {
 
     public static void main(String[] args) {
         runTests();
+
+
+        LongWord word = new LongWord();
+        for(int i = 0; i < 32; i++) {
+            word.setBit(i, true);
+        }
+        System.out.println("LW: " + word);
+        System.out.println("LW: " + word.getUnsigned());
+        System.out.println("LW signed: " + word.getSigned());
+        /*BitSet bitSet = new BitSet(32);
+        LongWord lw = new LongWord(bitSet);
+        for(int i = 0; i < 32; i++) {
+            if(i % 2 == 0)
+                bitSet.set(i);
+        }
+        System.out.println("LW: " + lw);
+        System.out.println("LW UnSigned: " + lw.getUnsigned());
+        System.out.println("LW signed: " + lw.getSigned());*/
     }
 }
