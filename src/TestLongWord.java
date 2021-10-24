@@ -1,5 +1,3 @@
-import java.util.BitSet;
-
 public class TestLongWord {
 
     public static void runTests() {

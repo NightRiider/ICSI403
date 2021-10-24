@@ -6,7 +6,9 @@ public class TestALU {
         l1.set(245);
         LongWord l2 = new LongWord();
         l2.set(55);
+        LongWord operation = new LongWord();
+        //operation
 
-        //System.out.println(alu.rippleCarryAdd(l1, l2, true));
+        System.out.println(alu.operate(1011 ,l1, l2));
     }
 }

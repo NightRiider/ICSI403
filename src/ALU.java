@@ -12,8 +12,57 @@ public class ALU {
         overflowFlag = false;
     }
 
+    public boolean getZF() {
+        return zeroFlag;
+    }
+
+    public boolean getNF() {
+        return negativeFlag;
+    }
+
+    public boolean getCF() {
+        return carryoutFlag;
+    }
+
+    public boolean getOF() {
+        return overflowFlag;
+    }
+
     public LongWord operate(int code, LongWord op1, LongWord op2) {
         LongWord result = new LongWord();
+
+        if(code == 1000) {
+            result = op1.and(op2);
+            if(result.isZero())
+                zeroFlag = true;
+            if(result.getBit(32))
+                negativeFlag = true;
+        }
+        else if(code == 1001) {
+            result = op1.or(op2);
+            if(result.isZero())
+                zeroFlag = true;
+            if(result.getBit(32))
+                negativeFlag = true;
+        }
+        else if(code == 1010) {
+
+        }
+        else if(code == 1011) {
+            return rippleCarryAdd(op1, op2, false);
+        }
+        else if(code == 1100) {
+            return rippleCarryAdd(op1, op2, true);
+        }
+        else if(code == 1101) {
+            return op1.shiftLeftLogical(op2.getSigned());
+        }
+        else if(code == 1110) {
+            return op1.shiftRightLogical(op2.getSigned());
+        }
+        else if(code == 1111) {
+            return op1.shiftRightArithmetic(op2.getSigned());
+        }
 
         return result;
     }
