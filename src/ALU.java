@@ -28,40 +28,41 @@ public class ALU {
         return overflowFlag;
     }
 
+    public void updateFlags(LongWord result) {
+        if (result.isZero())
+            zeroFlag = true;
+        if (result.getBit(31))
+            negativeFlag = true;
+    }
+
     public LongWord operate(int code, LongWord op1, LongWord op2) {
         LongWord result = new LongWord();
 
-        if(code == 1000) {
+        if (code == 0) {
             result = op1.and(op2);
-            if(result.isZero())
-                zeroFlag = true;
-            if(result.getBit(32))
-                negativeFlag = true;
-        }
-        else if(code == 1001) {
+            updateFlags(result);
+        } else if (code == 1) {
             result = op1.or(op2);
-            if(result.isZero())
+            updateFlags(result);
+        } else if (code == 2) {
+            result = op1.xor(op2);
+            updateFlags(result);
+        } else if (code == 3) {
+            result = rippleCarryAdd(op1, op2, false);
+            updateFlags(result);
+        } else if (code == 4) {
+            result = rippleCarryAdd(op1, op2, true);
+            updateFlags(result);
+        } else if (code == 5) {
+            result = op1.shiftLeftLogical(op2.getSigned());
+            updateFlags(result);
+        } else if (code == 6) {
+            result = op1.shiftRightLogical(op2.getSigned());
+            if (result.isZero())
                 zeroFlag = true;
-            if(result.getBit(32))
-                negativeFlag = true;
-        }
-        else if(code == 1010) {
-
-        }
-        else if(code == 1011) {
-            return rippleCarryAdd(op1, op2, false);
-        }
-        else if(code == 1100) {
-            return rippleCarryAdd(op1, op2, true);
-        }
-        else if(code == 1101) {
-            return op1.shiftLeftLogical(op2.getSigned());
-        }
-        else if(code == 1110) {
-            return op1.shiftRightLogical(op2.getSigned());
-        }
-        else if(code == 1111) {
-            return op1.shiftRightArithmetic(op2.getSigned());
+        } else if (code == 7) {
+            result = op1.shiftRightArithmetic(op2.getSigned());
+            updateFlags(result);
         }
 
         return result;
@@ -69,7 +70,9 @@ public class ALU {
 
     private LongWord rippleCarryAdd(LongWord a, LongWord b, boolean cin) {
         LongWord result;
-        if(!cin) {
+        LongWord origA = a;
+        LongWord origB = b;
+        if (!cin) {
             for (int i = 0; i < 32; i++) {
 
                 LongWord carry;
@@ -84,12 +87,13 @@ public class ALU {
 
             }
             result = a;
-            if(result.isZero()) {
+            if (result.isZero()) {
                 zeroFlag = true;
             }
-        }
-        else {
-            for(int i = 31; i > -1; i--){
+            if (origA.getBit(31) == origB.getBit(31) && result.getBit(31) != origA.getBit(31))
+                overflowFlag = true;
+        } else { // subtract
+            for (int i = 31; i > -1; i--) {
                 LongWord added;
                 LongWord borrow;
                 // flip the bits of the minuend (a)
@@ -100,6 +104,8 @@ public class ALU {
                 b = added.shiftLeftLogical(1);
             }
             result = a;
+            if (a.getBit(31) != b.getBit(31) && result.getBit(31) == b.getBit(31))
+                overflowFlag = true;
         }
         return result;
     }

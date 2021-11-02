@@ -71,27 +71,29 @@ public class TestLongWord {
         longWord.set(-1234567);
 
         System.out.println("LongWord:            \t" + longWord);
-        System.out.println("LongWords real value:\t" + -1234567);
         System.out.println("getSigned():         \t" + (longWord.getSigned() == -1234567 ? "Pass" : "Fail"));
         System.out.println();
+
     }
 
+    // pos
     private static void testgetUnsigned() {
         LongWord longWord = new LongWord();
-        longWord.set(1234567);
+        longWord.set(100);
 
         System.out.println("LongWord:            \t" + longWord);
-        System.out.println("getUnsigned():       \t" + (longWord.getUnsigned() == 1234567 ? "Pass" : "Fail"));
+        System.out.println("getUnsigned():       \t" + (longWord.getUnsigned() == 100 ? "Pass" : "Fail"));
+
         System.out.println();
     }
 
     private static void testSet() {
         LongWord longWord = new LongWord();
-        longWord.set(1234);
+        longWord.set(-14);
 
         System.out.println("LongWord:            \t" + longWord);
         System.out.println("LongWord value:      \t" + longWord.getSigned());
-        System.out.println("Set(1234):           \t" + (longWord.getSigned() == 1234 ? "Pass" : "Fail"));
+        System.out.println("Set(1234):           \t" + (longWord.getSigned() == -1234 ? "Pass" : "Fail"));
         System.out.println();
     }
 

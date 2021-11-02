@@ -141,7 +141,7 @@ public class LongWord {
 
         while (value != 0) {
 
-            if (value % 2 != 0) { // if multiple of 2
+            if (value % 2 != 0) { // if not multiple of 2
                 bitSet.set(31 - index);
             } else {
                 bitSet.clear(31 - index);
