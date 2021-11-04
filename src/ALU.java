@@ -1,10 +1,12 @@
 public class ALU {
 
+    // Flag Registers
     private boolean zeroFlag;
     private boolean negativeFlag;
     private boolean carryoutFlag;
     private boolean overflowFlag;
 
+    // Initializes all the flag registers to 0/false
     public ALU() {
         zeroFlag = false;
         negativeFlag = false;
@@ -44,6 +46,7 @@ public class ALU {
 
     public LongWord operate(int code, LongWord op1, LongWord op2) {
 
+        // Clear flag values before every new operation
         resetFlags();
         LongWord result = new LongWord();
 
@@ -63,7 +66,10 @@ public class ALU {
             result = rippleCarryAdd(op1, op2, true);
             updateFlags(result);
         } else if (code == 5) {
-            result = op1.shiftLeftLogical((int) op2.getUnsigned());
+            result = op1.shiftLeftLogical((int) op2.getUnsigned() % 32);
+            // Checks if there's an overflow in the MSB
+            if (op2.getUnsigned() % 32 == 1 && (op1.getBit(31) != result.getBit(31))) // either 1 to 0 or 0 to 1
+                overflowFlag = true;
             updateFlags(result);
         } else if (code == 6) {
             result = op1.shiftRightLogical((int) op2.getUnsigned());
@@ -81,18 +87,18 @@ public class ALU {
         LongWord result;
         LongWord origA = a;
         LongWord origB = b;
+
         // If false execute addition
         LongWord carry = new LongWord();
         if (!cin) {
             for (int i = 0; i < 32; i++) {
 
-
-                if((carry.getBit(30) && b.getBit(31)))
+                // Checks if there's a carryout in the MSB
+                if ((carry.getBit(30) && b.getBit(31)))
                     carryoutFlag = true;
 
                 // contains all the bits in both LongWOrd
                 carry = a.and(b);
-
 
                 // a now only has 1s in spots with 0 + 1
                 a = a.xor(b);
@@ -100,26 +106,18 @@ public class ALU {
                 // b now become the result of shifting the carry by one
                 b = carry.shiftLeftLogical(1);
 
-
-                // If there's nothing left to add, break out of loop
- //               if(b.isZero())
- //                   break;
-
-                //System.out.println("C " + carry);
-
             }
             result = a;
-            if (result.isZero()) {
-                zeroFlag = true;
-            }
             if (origA.getBit(31) == origB.getBit(31) && result.getBit(31) != origA.getBit(31))
                 overflowFlag = true;
-        } else { // subtract
+        }
+        // If cin is true, execute subtraction
+        else {
             LongWord added;
             LongWord borrow;
             for (int i = 31; i > -1; i--) {
 
-                if(i == 0 && !a.getBit(31)) {
+                if (i == 0 && !a.getBit(31)) {
                     carryoutFlag = true;
                 }
 
@@ -132,10 +130,11 @@ public class ALU {
 
             }
             result = a;
+
+            // Checks if MSB is overflowed out
             if (a.getBit(31) != b.getBit(31) && result.getBit(31) == b.getBit(31))
                 overflowFlag = true;
         }
         return result;
     }
-
 }
