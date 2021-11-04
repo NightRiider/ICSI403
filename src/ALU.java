@@ -35,7 +35,16 @@ public class ALU {
             negativeFlag = true;
     }
 
+    private void resetFlags() {
+        zeroFlag = false;
+        negativeFlag = false;
+        carryoutFlag = false;
+        overflowFlag = false;
+    }
+
     public LongWord operate(int code, LongWord op1, LongWord op2) {
+
+        resetFlags();
         LongWord result = new LongWord();
 
         if (code == 0) {
@@ -54,14 +63,14 @@ public class ALU {
             result = rippleCarryAdd(op1, op2, true);
             updateFlags(result);
         } else if (code == 5) {
-            result = op1.shiftLeftLogical(op2.getSigned());
+            result = op1.shiftLeftLogical((int) op2.getUnsigned());
             updateFlags(result);
         } else if (code == 6) {
-            result = op1.shiftRightLogical(op2.getSigned());
+            result = op1.shiftRightLogical((int) op2.getUnsigned());
             if (result.isZero())
                 zeroFlag = true;
         } else if (code == 7) {
-            result = op1.shiftRightArithmetic(op2.getSigned());
+            result = op1.shiftRightArithmetic((int) op2.getUnsigned());
             updateFlags(result);
         }
 
@@ -72,18 +81,31 @@ public class ALU {
         LongWord result;
         LongWord origA = a;
         LongWord origB = b;
+        // If false execute addition
+        LongWord carry = new LongWord();
         if (!cin) {
             for (int i = 0; i < 32; i++) {
 
-                LongWord carry;
-                //contains the bits that are common amongst a and b.
+
+                if((carry.getBit(30) && b.getBit(31)))
+                    carryoutFlag = true;
+
+                // contains all the bits in both LongWOrd
                 carry = a.and(b);
 
-                // a now only has bits set where only one of the bits in either a or b is set.
+
+                // a now only has 1s in spots with 0 + 1
                 a = a.xor(b);
 
-                // b now become the result of shifting the carry by one.
+                // b now become the result of shifting the carry by one
                 b = carry.shiftLeftLogical(1);
+
+
+                // If there's nothing left to add, break out of loop
+ //               if(b.isZero())
+ //                   break;
+
+                //System.out.println("C " + carry);
 
             }
             result = a;
@@ -93,15 +115,21 @@ public class ALU {
             if (origA.getBit(31) == origB.getBit(31) && result.getBit(31) != origA.getBit(31))
                 overflowFlag = true;
         } else { // subtract
+            LongWord added;
+            LongWord borrow;
             for (int i = 31; i > -1; i--) {
-                LongWord added;
-                LongWord borrow;
+
+                if(i == 0 && !a.getBit(31)) {
+                    carryoutFlag = true;
+                }
+
                 // flip the bits of the minuend (a)
                 borrow = a.not();
 
                 added = borrow.and(b);
                 a = a.xor(b);
                 b = added.shiftLeftLogical(1);
+
             }
             result = a;
             if (a.getBit(31) != b.getBit(31) && result.getBit(31) == b.getBit(31))
