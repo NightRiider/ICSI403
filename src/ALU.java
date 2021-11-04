@@ -7,6 +7,7 @@ public class ALU {
     private boolean overflowFlag;
 
     // Initializes all the flag registers to 0/false
+    //TEST
     public ALU() {
         zeroFlag = false;
         negativeFlag = false;
