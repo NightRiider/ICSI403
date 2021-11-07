@@ -3,7 +3,6 @@ public class TestALU {
         ALU alu = new ALU();
         runTests(alu);
 
-
         // 0 0 1 * OVER * bc 2^30+2^30 = 1... GOOD
         // 1 1 0 * OVER * bc 2^31+2^31 = 0... GOOD
     }
@@ -59,10 +58,9 @@ public class TestALU {
 
     public static void testADD(ALU alu) {
         LongWord word1 = new LongWord();
-        word1.setBit(31);
-        word1.setBit(30);
+        word1.set((int) Math.pow(2, 29));
         LongWord word2 = new LongWord();
-        word2.set((int) Math.pow(2, 30));
+        word2.set((int) Math.pow(2, 29));
 
         System.out.println("LongWord 1: \t\t" + word1);
         System.out.println("LongWord 2: \t\t" + word2);
@@ -97,7 +95,7 @@ public class TestALU {
         System.out.println("LongWord 1: \t\t" + word1);
         System.out.println("LongWord 2: \t\t" + word2);
         System.out.println("Result of SLL: \t\t" + alu.operate(5, word1, word2));
-        System.out.println("OF: \t\t" + alu.getOF());
+        System.out.println("OF Flag: \t\t" + alu.getOF());
         System.out.println();
     }
 

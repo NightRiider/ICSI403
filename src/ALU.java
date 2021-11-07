@@ -7,7 +7,6 @@ public class ALU {
     private boolean overflowFlag;
 
     // Initializes all the flag registers to 0/false
-    //TEST
     public ALU() {
         zeroFlag = false;
         negativeFlag = false;
@@ -31,6 +30,7 @@ public class ALU {
         return overflowFlag;
     }
 
+    // Updates the NF and ZF after operations
     public void updateFlags(LongWord result) {
         if (result.isZero())
             zeroFlag = true;
@@ -38,6 +38,7 @@ public class ALU {
             negativeFlag = true;
     }
 
+    // Resets the flag registers (to be used before every operation)
     private void resetFlags() {
         zeroFlag = false;
         negativeFlag = false;
@@ -49,8 +50,10 @@ public class ALU {
 
         // Clear flag values before every new operation
         resetFlags();
+
         LongWord result = new LongWord();
 
+        // Performs the correct operation with the given ALU code
         if (code == 0) {
             result = op1.and(op2);
             updateFlags(result);
@@ -118,6 +121,7 @@ public class ALU {
             LongWord borrow;
             for (int i = 31; i > -1; i--) {
 
+                // Checks if the MSB changed
                 if (i == 0 && !a.getBit(31)) {
                     carryoutFlag = true;
                 }
