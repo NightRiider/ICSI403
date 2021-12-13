@@ -2,6 +2,8 @@ public class TestALU {
     public static void main(String[] args) {
         ALU alu = new ALU();
         runTests(alu);
+        TestLongWord.runTests();
+        TestMemory.runTests();
 
         // 0 0 1 * OVER * bc 2^30+2^30 = 1... GOOD
         // 1 1 0 * OVER * bc 2^31+2^31 = 0... GOOD
